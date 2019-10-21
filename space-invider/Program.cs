@@ -7,14 +7,63 @@ namespace space_invider
     {
         static void Main(string[] args)
         {
-           
-            Frame frame = new Frame(30,40);
+
+            Ship ship = new Ship(13, 18);
+            Frame frame = new Frame(15, 20);
+
+
+            /*
+                        while (true)
+            {
+                Draw(ship,frame);
+
+                ConsoleKeyInfo keyPressed = Console.ReadKey();
+
+                if ((keyPressed.Key == ConsoleKey.W && ship.Y != 1) || (keyPressed.Key == ConsoleKey.S && ship.Y != frame.Height-2))
+                {
+                    ship.Y += (keyPressed.Key == ConsoleKey.S) ? 1 : -1;
+                }
+                if ((keyPressed.Key == ConsoleKey.A && ship.X != 2) || (keyPressed.Key == ConsoleKey.D && ship.X != frame.Width - 1))
+                {
+                    ship.Y += (keyPressed.Key == ConsoleKey.D) ? 1 : -1;
+                }
+                
+            }
+
+             */
+
+            frame.CreateFrame();
+            Console.Clear();
+
+
+
+
+
+
+        }
+
+        static void Draw(Ship ship,Frame frame)
+        {
+            Console.Clear();
             frame.CreateFrame();
 
-            frame.DrawFrame();
+            Console.WriteLine("(" + ship.X +"," + ship.Y +")");
+
+            for (int y = 1; y < frame.Height; y++)
+            {
+                for(int x =1; x<frame.Width;x++)
+                {
+                    if (x == ship.X && y == ship.Y)
+                    {
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(ship.SpaceShip);
+                    }
+                        
+                    
+                }
+            }
 
 
-          
         }
     }
 
@@ -30,19 +79,9 @@ namespace space_invider
             this.Y = y;
         }
     }
-    class FrameElement : Position
-    {
-        public char Frame { get; set; }
 
-        public FrameElement(int y, int x) : base(x,y)
-        { 
-            this.Frame = '#';
-        }
-    }
     class Frame
     {
-        public List<FrameElement> frameList = new List<FrameElement>();
-
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -56,27 +95,34 @@ namespace space_invider
         {
             for (int i = 0; i < this.Height; i++)
             {
-                for (int j = 0; j < this.Width; j++)
-                {
-                    if (i == 0 || i==this.Height-1 || j==0 || j==this.Width-1)
-                    {
-                        frameList.Add(new FrameElement(i, j));
-                    }
-                    
-                }
+                Console.SetCursorPosition(0, i);
+                Console.Write("*");
+                Console.SetCursorPosition(this.Width-1, i);
+                Console.Write("*");
             }
-        }
-
-        public void DrawFrame()
-        {
-            foreach (var fl in frameList)
+            for (int j = 0; j < this.Width; j++)
             {
-                Console.SetCursorPosition(fl.X, fl.Y);
-                Console.Write(fl.Frame);
+                Console.SetCursorPosition(j, 0);
+                Console.Write("*");
+                Console.SetCursorPosition(j, this.Height-1);
+                Console.Write("*");
             }
+
         }
 
     }
+    class Ship:Position
+    {
+        public char SpaceShip { get; set; }
+
+        public Ship(int x, int y) : base(x,y)
+        {
+            this.SpaceShip = '^';
+        }
+
+
+    }
+
     class GameBoard
     {
     }
