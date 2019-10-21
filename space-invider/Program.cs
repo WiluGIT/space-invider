@@ -71,6 +71,25 @@ namespace space_invider
 
     }
 
+    class Enemy: Position
+    {
+        public char EnemyCharacter { get; set; }
+        public Enemy(int x, int y) : base(x,y)
+        {
+            this.EnemyCharacter = '$';
+        }
+
+        public void MoveEnemy(int height)
+        {
+            if(this.Y != height -2)
+            {
+                this.Y++;
+
+            }
+
+        }
+    }
+
     class Laser: Position
     {
         public char FireLasor { get; set; }
@@ -82,14 +101,15 @@ namespace space_invider
 
         public void MoveLasor(GameBoard gb)
         {
+            // Mozliwosc przyspieszenia strzalu, po obsluzeniu warunku
             while (this.Y != 1)
             {
-                this.Y--;
+                this.Y -= 1;
                 Console.SetCursorPosition(this.X, this.Y);
-                Console.Write(this.FireLasor);
+                Console.Write(this.FireLasor);              
                 Thread.Sleep(10);
                 gb.Draw();
-                
+
             }
         }
     }
@@ -100,40 +120,56 @@ namespace space_invider
         public Ship ship { get; set; }
         public Frame frame { get; set; }
 
+        public Enemy enemy { get; set; }
+
         public GameBoard()
         {
             this.ship = new Ship(13, 18);
-            this.frame = new Frame(15, 20);
+            this.frame = new Frame(30, 20);
         }
 
         public void Play() 
         {
-            Laser laser;
-
+            GenerateEnemy();
             while (true)
             {
                 Draw();
 
-                ConsoleKeyInfo keyPressed = Console.ReadKey(true);
-
-                if ((keyPressed.Key == ConsoleKey.W && ship.Y != 1) || (keyPressed.Key == ConsoleKey.S && ship.Y != frame.Height - 2))
-                {
-                    ship.Y += (keyPressed.Key == ConsoleKey.S) ? 1 : -1;
-                }
-                if ((keyPressed.Key == ConsoleKey.A && ship.X != 1) || (keyPressed.Key == ConsoleKey.D && ship.X != frame.Width - 2))
-                {
-                    ship.X += (keyPressed.Key == ConsoleKey.D) ? 1 : -1;
-                }
-                if (keyPressed.Key == ConsoleKey.Spacebar)
-                {
-
-                    laser = new Laser(ship.X, ship.Y);
-                    laser.MoveLasor(this);
-                }
+                ListenClicks();
 
 
             }
 
+        }
+
+        public void GenerateEnemy()
+        {
+            Enemy en = new Enemy(1, 1);
+
+            this.enemy = en;
+        }
+
+
+        public void ListenClicks()
+        {
+            ConsoleKeyInfo keyPressed = Console.ReadKey(true);
+
+            if ((keyPressed.Key == ConsoleKey.W && ship.Y != 1) || (keyPressed.Key == ConsoleKey.S && ship.Y != frame.Height - 2))
+            {
+                ship.Y += (keyPressed.Key == ConsoleKey.S) ? 1 : -1;
+            }
+            if ((keyPressed.Key == ConsoleKey.A && ship.X != 1) || (keyPressed.Key == ConsoleKey.D && ship.X != frame.Width - 2))
+            {
+                ship.X += (keyPressed.Key == ConsoleKey.D) ? 1 : -1;
+            }
+            if (keyPressed.Key == ConsoleKey.Spacebar)
+            {
+
+                Laser laser = new Laser(ship.X, ship.Y);
+                laser.MoveLasor(this);
+            }
+
+            this.enemy.MoveEnemy(this.frame.Height);
         }
 
         public void Draw()
@@ -147,7 +183,12 @@ namespace space_invider
             {
                 for (int x = 1; x < frame.Width; x++)
                 {
-                    if (x == ship.X && y == ship.Y)
+                    if(x == enemy.X && y == enemy.Y)
+                    {
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(enemy.EnemyCharacter);
+                    }
+                    else if (x == ship.X && y == ship.Y)
                     {
                         Console.SetCursorPosition(x, y);
                         Console.Write(ship.SpaceShip);
