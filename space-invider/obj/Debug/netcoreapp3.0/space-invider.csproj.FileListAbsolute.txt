@@ -1,0 +1,11 @@
+/Users/admin/Projects/space-invider/space-invider/bin/Debug/netcoreapp3.0/space-invider
+/Users/admin/Projects/space-invider/space-invider/bin/Debug/netcoreapp3.0/space-invider.deps.json
+/Users/admin/Projects/space-invider/space-invider/bin/Debug/netcoreapp3.0/space-invider.runtimeconfig.json
+/Users/admin/Projects/space-invider/space-invider/bin/Debug/netcoreapp3.0/space-invider.runtimeconfig.dev.json
+/Users/admin/Projects/space-invider/space-invider/bin/Debug/netcoreapp3.0/space-invider.dll
+/Users/admin/Projects/space-invider/space-invider/bin/Debug/netcoreapp3.0/space-invider.pdb
+/Users/admin/Projects/space-invider/space-invider/obj/Debug/netcoreapp3.0/space-invider.csprojAssemblyReference.cache
+/Users/admin/Projects/space-invider/space-invider/obj/Debug/netcoreapp3.0/space-invider.AssemblyInfoInputs.cache
+/Users/admin/Projects/space-invider/space-invider/obj/Debug/netcoreapp3.0/space-invider.AssemblyInfo.cs
+/Users/admin/Projects/space-invider/space-invider/obj/Debug/netcoreapp3.0/space-invider.dll
+/Users/admin/Projects/space-invider/space-invider/obj/Debug/netcoreapp3.0/space-invider.pdb
