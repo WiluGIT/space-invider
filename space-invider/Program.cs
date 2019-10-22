@@ -119,8 +119,9 @@ namespace space_invider
         
         public Ship ship { get; set; }
         public Frame frame { get; set; }
-
         public Enemy enemy { get; set; }
+
+        public Laser laser { get; set; }
 
         public GameBoard()
         {
@@ -130,13 +131,16 @@ namespace space_invider
 
         public void Play() 
         {
+            
             GenerateEnemy();
             while (true)
             {
+                
                 Draw();
+                
 
                 ListenClicks();
-
+                
 
             }
 
@@ -144,7 +148,10 @@ namespace space_invider
 
         public void GenerateEnemy()
         {
-            Enemy en = new Enemy(1, 1);
+            Random rnd = new Random();
+
+            Enemy en = new Enemy(rnd.Next(1, frame.Width-2), 0);
+
 
             this.enemy = en;
         }
@@ -165,11 +172,11 @@ namespace space_invider
             if (keyPressed.Key == ConsoleKey.Spacebar)
             {
 
-                Laser laser = new Laser(ship.X, ship.Y);
+                this.laser = new Laser(ship.X, ship.Y);
                 laser.MoveLasor(this);
             }
-
-            this.enemy.MoveEnemy(this.frame.Height);
+            if(enemy!=null)
+                this.enemy.MoveEnemy(this.frame.Height);
         }
 
         public void Draw()
@@ -183,7 +190,15 @@ namespace space_invider
             {
                 for (int x = 1; x < frame.Width; x++)
                 {
-                    if(x == enemy.X && y == enemy.Y)
+                    
+                    if((laser!=null) &&(enemy !=null)&& (enemy.X==laser.X) && (enemy.Y==laser.Y))
+                    {
+
+                        enemy = null;
+                        laser = null;
+                       
+                    }
+                    else if((enemy!=null) && (x == enemy.X) && (y == enemy.Y))
                     {
                         Console.SetCursorPosition(x, y);
                         Console.Write(enemy.EnemyCharacter);
@@ -192,6 +207,10 @@ namespace space_invider
                     {
                         Console.SetCursorPosition(x, y);
                         Console.Write(ship.SpaceShip);
+                    }
+                    if (enemy == null)
+                    {
+                       GenerateEnemy();
                     }
 
 
