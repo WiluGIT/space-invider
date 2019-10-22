@@ -123,10 +123,13 @@ namespace space_invider
 
         public Laser laser { get; set; }
 
+        public int Score { get; set; }
+
         public GameBoard()
         {
             this.ship = new Ship(13, 18);
             this.frame = new Frame(30, 20);
+            Score = 0;
         }
 
         public void Play() 
@@ -184,7 +187,9 @@ namespace space_invider
             Console.Clear();
             frame.CreateFrame();
 
+            Console.SetCursorPosition(0, frame.Height );
             Console.WriteLine("(" + ship.X + "," + ship.Y + ")");
+            Console.WriteLine("Score: {0}", Score);
 
             for (int y = 1; y < frame.Height; y++)
             {
@@ -200,9 +205,9 @@ namespace space_invider
                     }
                     if ((laser!=null) &&(enemy !=null)&& (enemy.X==laser.X) && (enemy.Y==laser.Y)) // killing enemy
                     {
-
                         enemy = null;
                         laser = null;
+                        Score++;
                        
                     }
                     if((enemy!=null) && (x == enemy.X) && (y == enemy.Y))
