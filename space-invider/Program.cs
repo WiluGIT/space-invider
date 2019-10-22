@@ -81,7 +81,7 @@ namespace space_invider
 
         public void MoveEnemy(int height)
         {
-            if(this.Y != height -2)
+            if(this.Y != height -1)
             {
                 this.Y++;
 
@@ -190,20 +190,27 @@ namespace space_invider
             {
                 for (int x = 1; x < frame.Width; x++)
                 {
-                    
-                    if((laser!=null) &&(enemy !=null)&& (enemy.X==laser.X) && (enemy.Y==laser.Y))
+                    if (enemy != null && ship != null && enemy.X == ship.X && enemy.Y == ship.Y || enemy.Y >= frame.Height - 2)  // losing game
+                    {
+                        enemy = null;
+                        ship = null;
+                        Console.SetCursorPosition(0, frame.Height + 2);
+                        Console.Write("Game Over!");
+
+                    }
+                    if ((laser!=null) &&(enemy !=null)&& (enemy.X==laser.X) && (enemy.Y==laser.Y)) // killing enemy
                     {
 
                         enemy = null;
                         laser = null;
                        
                     }
-                    else if((enemy!=null) && (x == enemy.X) && (y == enemy.Y))
+                    if((enemy!=null) && (x == enemy.X) && (y == enemy.Y))
                     {
                         Console.SetCursorPosition(x, y);
                         Console.Write(enemy.EnemyCharacter);
                     }
-                    else if (x == ship.X && y == ship.Y)
+                    if (ship!=null && x == ship.X && y == ship.Y)
                     {
                         Console.SetCursorPosition(x, y);
                         Console.Write(ship.SpaceShip);
