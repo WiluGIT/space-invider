@@ -44,6 +44,7 @@ namespace space_invider
         {
             for (int i = 0; i < this.Height; i++)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.SetCursorPosition(0, i);
                 Console.Write("*");
                 Console.SetCursorPosition(this.Width-1, i);
@@ -51,6 +52,7 @@ namespace space_invider
             }
             for (int j = 0; j < this.Width; j++)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.SetCursorPosition(j, 0);
                 Console.Write("*");
                 Console.SetCursorPosition(j, this.Height-1);
@@ -69,6 +71,12 @@ namespace space_invider
             this.SpaceShip = '^';
         }
 
+        public void DrawShip()
+        {
+            Console.SetCursorPosition(this.X, this.Y);
+            Console.Write(this.SpaceShip);
+        }
+
     }
 
     class Enemy: Position
@@ -83,10 +91,18 @@ namespace space_invider
         {
             if(this.Y != height -1)
             {
+                Console.SetCursorPosition(this.X, this.Y);
+                Console.Write(" ");
                 this.Y++;
 
             }
 
+        }
+
+        public void DrawEnemy() 
+        {
+            Console.SetCursorPosition(this.X, this.Y);
+            Console.Write(this.EnemyCharacter);
         }
     }
 
@@ -102,15 +118,18 @@ namespace space_invider
         public void MoveLasor(GameBoard gb)
         {
             // Mozliwosc przyspieszenia strzalu, po obsluzeniu warunku
-            while (this.Y != 1)
+            while (this.Y != 1) 
             {
-                this.Y -= 1;
                 Console.SetCursorPosition(this.X, this.Y);
-                Console.Write(this.FireLasor);              
+                Console.Write(this.FireLasor);
                 Thread.Sleep(10);
                 gb.Draw();
+                Console.SetCursorPosition(this.X, this.Y);
+                Console.Write(" ");
+                this.Y -= 1;
 
-            }
+
+            } 
         }
     }
 
@@ -134,7 +153,8 @@ namespace space_invider
 
         public void Play() 
         {
-            
+            frame.CreateFrame();
+
             GenerateEnemy();
             while (true)
             {
@@ -153,7 +173,7 @@ namespace space_invider
         {
             Random rnd = new Random();
 
-            Enemy en = new Enemy(rnd.Next(1, frame.Width-2), 0);
+            Enemy en = new Enemy(rnd.Next(1, frame.Width-2), 1);
 
 
             this.enemy = en;
@@ -166,26 +186,29 @@ namespace space_invider
 
             if ((keyPressed.Key == ConsoleKey.W && ship.Y != 1) || (keyPressed.Key == ConsoleKey.S && ship.Y != frame.Height - 2))
             {
+                Console.SetCursorPosition(ship.X, ship.Y);
+                Console.Write(" ");
                 ship.Y += (keyPressed.Key == ConsoleKey.S) ? 1 : -1;
             }
             if ((keyPressed.Key == ConsoleKey.A && ship.X != 1) || (keyPressed.Key == ConsoleKey.D && ship.X != frame.Width - 2))
             {
+                Console.SetCursorPosition(ship.X, ship.Y);
+                Console.Write(" ");
                 ship.X += (keyPressed.Key == ConsoleKey.D) ? 1 : -1;
             }
             if (keyPressed.Key == ConsoleKey.Spacebar)
             {
-
-                this.laser = new Laser(ship.X, ship.Y);
+                this.laser = new Laser(ship.X, ship.Y-1);
                 laser.MoveLasor(this);
             }
             if(enemy!=null)
                 this.enemy.MoveEnemy(this.frame.Height);
+
+            
         }
 
         public void Draw()
         {
-            Console.Clear();
-            frame.CreateFrame();
 
             Console.SetCursorPosition(0, frame.Height );
             Console.WriteLine("(" + ship.X + "," + ship.Y + ")");
@@ -212,13 +235,11 @@ namespace space_invider
                     }
                     if((enemy!=null) && (x == enemy.X) && (y == enemy.Y))
                     {
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(enemy.EnemyCharacter);
+                        enemy.DrawEnemy();
                     }
                     if (ship!=null && x == ship.X && y == ship.Y)
                     {
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(ship.SpaceShip);
+                        ship.DrawShip();
                     }
                     if (enemy == null)
                     {
