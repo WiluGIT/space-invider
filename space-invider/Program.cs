@@ -6,11 +6,57 @@ namespace space_invider
 {
     class Program
     {
+        private static string userAction;
+
+        private static bool isStayInMenu=true;
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
-            GameBoard gB = new GameBoard();
-            gB.Play();
+
+            GameBoard gB;
+
+            showMenu(out userAction);
+
+            do
+            {
+                switch (userAction)
+                {
+                    case "1":
+                        Console.Clear();
+                        gB = new GameBoard();
+                        gB.Play();
+                        Console.Clear();
+                        showMenu(out userAction);
+                        break;
+                    case "2":
+                        Console.Clear();
+                        Console.WriteLine("Wybrales opcje 2");
+                        Console.ReadLine();
+                        Console.Clear();
+                        showMenu(out userAction);
+                        break;
+                    case "3":
+                        isStayInMenu = false;
+                        Console.Clear();
+                        break;
+                    default:
+                        Console.WriteLine("Wybrales zla opcje, wybierz ponownie");
+                        Console.ReadLine();
+                        Console.Clear();
+                        showMenu(out userAction);
+                        break;
+                }
+            } while (isStayInMenu);
+
+
+        }
+
+
+        private static void showMenu(out string userAction)
+        {
+            string menu = "1. Play Game!\n2. 2. Show Instruction\n3. Exit Game";
+            Console.WriteLine(menu);
+            userAction = Console.ReadLine().ToLower();
 
         }
 
@@ -147,30 +193,39 @@ namespace space_invider
 
         public int Score { get; set; }
 
+        private bool isPlaying;
+
         public GameBoard()
         {
             this.ship = new Ship(13, 18);
             this.frame = new Frame(30, 20);
-            Score = 0;
+            this.Score = 0;
+            this.isPlaying = true;
+
         }
 
         public void Play() 
         {
-            frame.CreateFrame();
 
+            frame.CreateFrame();
             GenerateEnemy();
-            while (true)
+
+            while (this.isPlaying) 
             {
-                
-                Draw();
-                
+
+                Draw(); 
+
 
                 ListenClicks();
-                
+
 
             }
+            Console.Clear();
+
+
 
         }
+
 
         public void GenerateEnemy()
         {
@@ -185,29 +240,33 @@ namespace space_invider
 
         public void ListenClicks()
         {
-            ConsoleKeyInfo keyPressed = Console.ReadKey(true);
+            if(isPlaying==true)
+            {
+                ConsoleKeyInfo keyPressed = Console.ReadKey(true);
 
-            if ((keyPressed.Key == ConsoleKey.W && ship.Y != 1) || (keyPressed.Key == ConsoleKey.S && ship.Y != frame.Height - 2))
-            {
-                Console.SetCursorPosition(ship.X, ship.Y);
-                Console.Write(" ");
-                ship.Y += (keyPressed.Key == ConsoleKey.S) ? 1 : -1;
-            }
-            if ((keyPressed.Key == ConsoleKey.A && ship.X != 1) || (keyPressed.Key == ConsoleKey.D && ship.X != frame.Width - 2))
-            {
-                Console.SetCursorPosition(ship.X, ship.Y);
-                Console.Write(" ");
-                ship.X += (keyPressed.Key == ConsoleKey.D) ? 1 : -1;
-            }
-            if (keyPressed.Key == ConsoleKey.Spacebar)
-            {
-                this.laser = new Laser(ship.X, ship.Y-1);
-                laser.MoveLasor(this);
-            }
-            if(enemy!=null)
-                this.enemy.MoveEnemy(this.frame.Height);
+                if ((keyPressed.Key == ConsoleKey.W && ship.Y != 1) || (keyPressed.Key == ConsoleKey.S && ship.Y != frame.Height - 2))
+                {
+                    Console.SetCursorPosition(ship.X, ship.Y);
+                    Console.Write(" ");
+                    ship.Y += (keyPressed.Key == ConsoleKey.S) ? 1 : -1;
+                }
+                if ((keyPressed.Key == ConsoleKey.A && ship.X != 1) || (keyPressed.Key == ConsoleKey.D && ship.X != frame.Width - 2))
+                {
+                    Console.SetCursorPosition(ship.X, ship.Y);
+                    Console.Write(" ");
+                    ship.X += (keyPressed.Key == ConsoleKey.D) ? 1 : -1;
+                }
+                if (ship != null && keyPressed.Key == ConsoleKey.Spacebar)
+                {
+                    this.laser = new Laser(ship.X, ship.Y - 1);
+                    laser.MoveLasor(this);
+                }
+                if (enemy != null)
+                    this.enemy.MoveEnemy(this.frame.Height);
 
-            
+            }
+
+
         }
 
         public void Draw()
@@ -222,21 +281,7 @@ namespace space_invider
             {
                 for (int x = 1; x < frame.Width; x++)
                 {
-                    if (enemy != null && ship != null && enemy.X == ship.X && enemy.Y == ship.Y || enemy.Y >= frame.Height - 2)  // losing game
-                    {
-                        enemy = null;
-                        ship = null;
-                        Console.SetCursorPosition(0, frame.Height + 2);
-                        Console.Write("Game Over!");
 
-                    }
-                    if ((laser!=null) &&(enemy !=null)&& (enemy.X==laser.X) && (enemy.Y==laser.Y)) // killing enemy
-                    {
-                        enemy = null;
-                        laser = null;
-                        Score++;
-                       
-                    }
                     if((enemy!=null) && (x == enemy.X) && (y == enemy.Y))
                     {
                         enemy.DrawEnemy();
@@ -248,6 +293,26 @@ namespace space_invider
                     if (enemy == null)
                     {
                        GenerateEnemy();
+                    }
+                    if (enemy != null && ship != null && enemy.X == ship.X && enemy.Y == ship.Y || enemy.Y >= frame.Height - 2)  // losing game
+                    {
+
+                        enemy = null;
+                        ship = null;
+                        Console.SetCursorPosition(0, frame.Height + 2);
+                        Console.WriteLine("Game Over!");
+                        Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
+                        Console.ReadKey();
+                        this.isPlaying = false;
+
+
+                    }
+                    if ((laser != null) && (enemy != null) && (enemy.X == laser.X) && (enemy.Y == laser.Y)) // killing enemy
+                    {
+                        enemy = null;
+                        laser = null;
+                        Score++;
+
                     }
 
 
