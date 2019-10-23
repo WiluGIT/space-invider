@@ -319,6 +319,7 @@ namespace space_invider
 
                 }
             }
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 
