@@ -74,6 +74,7 @@ namespace space_invider
         public void DrawShip()
         {
             Console.SetCursorPosition(this.X, this.Y);
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write(this.SpaceShip);
         }
 
@@ -102,6 +103,7 @@ namespace space_invider
         public void DrawEnemy() 
         {
             Console.SetCursorPosition(this.X, this.Y);
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.Write(this.EnemyCharacter);
         }
     }
@@ -118,9 +120,10 @@ namespace space_invider
         public void MoveLasor(GameBoard gb)
         {
             // Mozliwosc przyspieszenia strzalu, po obsluzeniu warunku
-            while (this.Y != 1) 
+            while (this.Y != 0) 
             {
                 Console.SetCursorPosition(this.X, this.Y);
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write(this.FireLasor);
                 Thread.Sleep(10);
                 gb.Draw();
@@ -211,6 +214,7 @@ namespace space_invider
         {
 
             Console.SetCursorPosition(0, frame.Height );
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("(" + ship.X + "," + ship.Y + ")");
             Console.WriteLine("Score: {0}", Score);
 
