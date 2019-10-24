@@ -250,7 +250,7 @@ namespace space_invider
 
         public int Score { get; set; }
 
-        public bool isPlaying { get; set; }
+        public volatile bool isPlaying;
 
         public bool buttonClicked { get; set; }
 
@@ -289,7 +289,8 @@ namespace space_invider
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine("Game Over!");
                     Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");                  
-                    Console.ReadKey();
+                    Console.ReadKey(true);
+                    break;
                     
 
 
