@@ -22,21 +22,21 @@ namespace space_invider
             {
                 switch (userAction)
                 {
-                    case "1":
+                    case "0":
                         Console.Clear();
                         gB = new GameBoard();
                         gB.Play();
                         Console.Clear();
                         showMenu(out userAction);
                         break;
-                    case "2":
+                    case "1":
                         Console.Clear();
                         Console.WriteLine("Wybrales opcje 2");
                         Console.ReadLine();
                         Console.Clear();
                         showMenu(out userAction);
                         break;
-                    case "3":
+                    case "2":
                         isStayInMenu = false;
                         Console.Clear();
                         break;
@@ -55,14 +55,52 @@ namespace space_invider
 
         private static void showMenu(out string userAction)
         {
-            string menu = "1. Play Game!\n2. 2. Show Instruction\n3. Exit Game";
-            Console.WriteLine(menu);
-            userAction = Console.ReadLine().ToLower();
+            var menu = new Menu(new string[] { "1. Play Game!\n", "2. Show Instruction\n", "3. Exit Game\n" });
+
+            bool done = false;
+
+            do
+            {
+                ConsoleKeyInfo keyInfo  = Console.ReadKey();
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        menu.MoveUp();
+                        break;
+                    case ConsoleKey.DownArrow:
+                        menu.MoveDown();
+                        break;
+                    case ConsoleKey.Enter:
+                        done = true;
+                        break;
+                }
+            }
+            while (!done);
+
+
+
+            //string menu = "1. Play Game!\n2. 2. Show Instruction\n3. Exit Game";
+            Console.WriteLine(menu.SelectedIndex);
+            userAction = menu.SelectedIndex.ToString();
 
         }
 
     }
 
+
+    class Menu
+    {
+        public IReadOnlyList<string> Items { get; set; }
+        public int SelectedIndex { get; private set; } = -1;
+        public string SelctedOption => SelectedIndex != -1 ? this.Items[SelectedIndex] : null;
+
+        public void MoveUp () => SelectedIndex = Math.Max(SelectedIndex - 1, 0);
+        public void MoveDown() => SelectedIndex = Math.Min(SelectedIndex + 1, Items.Count - 1);
+        public Menu(IEnumerable<string> items)
+        {
+            this.Items = items.ToArray();
+        }
+    }
 
     class Position
     {
