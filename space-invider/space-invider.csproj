@@ -6,4 +6,8 @@
     <RootNamespace>space_invider</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 namespace space_invider
@@ -10,6 +13,10 @@ namespace space_invider
         private static string userAction;
 
         private static bool isStayInMenu=true;
+
+        private static bool isAnimating = true;
+
+        private static Thread shipAnimationThread;
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
@@ -23,6 +30,7 @@ namespace space_invider
                 switch (userAction)
                 {
                     case "0":
+                        isAnimating = false;
                         Console.Clear();
                         gB = new GameBoard();
                         gB.Play();
@@ -32,11 +40,15 @@ namespace space_invider
                     case "1":
                         Console.Clear();
                         Console.WriteLine("Wybrales opcje 2");
+                        isAnimating = true;
+                        animateShip();
                         Console.ReadLine();
+                        isAnimating = false;
                         Console.Clear();
                         showMenu(out userAction);
                         break;
                     case "2":
+                        isAnimating = false;
                         isStayInMenu = false;
                         Console.Clear();
                         break;
@@ -52,9 +64,79 @@ namespace space_invider
 
         }
 
+        private static void animateShip()
+        {
+            Frame frame = new Frame(70,10);
+
+            shipAnimationThread = new Thread(t =>
+            {
+                while (isAnimating)
+                {
+
+                    Image image = Image.FromFile(@"C:\Users\wolfr\Desktop\gif1.gif");
+                    FrameDimension dimension = new FrameDimension(image.FrameDimensionsList[0]);
+                    int frameCount = image.GetFrameCount(dimension);
+                    StringBuilder sb;
+
+                    int left = Console.WindowLeft, top = Console.WindowTop;
+
+                    char[] chars = { '#', '#', '@', '%', '=', '+', '*', ':', '-', '.', ' ' };
+                    
+                    for (int i = 0; ; i = (i + 1) % frameCount)
+                    {
+                        if (isAnimating == false)
+                            break;
+                        sb = new StringBuilder();
+                        image.SelectActiveFrame(dimension, i);
+                        Console.SetCursorPosition(20, top);
+                        frame.CreateAnimationFrame();
+
+                        Console.SetCursorPosition(22, top+1);
+                        Console.Write("Cel gry: Zlikwiduj wszystkich kosmitow zanim oni dopadna ciebie! \n");
+                        Console.SetCursorPosition(22, top+2);
+                        Console.Write("To jest twoj statek:\n");
+                        Console.SetCursorPosition(22, top + 3);
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.Write("^");
+                        Console.ResetColor();
+                        Console.SetCursorPosition(22, top + 4);
+                        Console.Write("To jest twoj przeciwnik:\n");          
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.SetCursorPosition(22, top + 5);
+                        Console.Write("$");
+                        Console.ResetColor();
+                        for (int h = 0; h < image.Height; h++)
+                        {
+                            for (int w = 0; w < image.Width; w++)
+                            {
+                                Color cl = ((Bitmap)image).GetPixel(w, h);
+                                int gray = (cl.R + cl.R + cl.B) / 3;
+                                int index = (gray * (chars.Length - 1)) / 255;
+
+                                sb.Append(chars[index]);
+                            }
+                            sb.Append('\n');
+                        }
+                       
+                        Console.SetCursorPosition(left, top);
+                        Console.Write(sb.ToString());
+
+                        System.Threading.Thread.Sleep(100);
+                    }
+
+                }
+
+            })
+            {
+                IsBackground = true
+            };
+            shipAnimationThread.Start();
+           
+        }
 
         private static void showMenu(out string userAction)
         {
+            
             var menu = new Menu(new string[] { "1. Play Game!\n", "2. Show Instruction\n", "3. Exit Game\n" });
 
             bool done = false;
@@ -81,10 +163,11 @@ namespace space_invider
             while (!done);
 
 
-
-            //string menu = "1. Play Game!\n2. 2. Show Instruction\n3. Exit Game";
             Console.WriteLine(menu.SelectedIndex);
             userAction = menu.SelectedIndex.ToString();
+            
+
+           
 
         }
 
@@ -195,6 +278,27 @@ namespace space_invider
                 Console.Write("*");
             }
 
+        }
+
+        public void CreateAnimationFrame()
+        {
+            for (int i = 0; i < this.Height; i++)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.SetCursorPosition(20, i);
+                Console.Write("\x03ee");
+                Console.SetCursorPosition(this.Width + 19, i);
+                Console.Write("\x03ee");
+            }
+            for (int j = 20; j < this.Width+20; j++)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.SetCursorPosition(j, 0);
+                Console.Write("\x03ee");
+                Console.SetCursorPosition(j, this.Height - 1);
+                Console.Write("\x03ee");
+            }
+            Console.ResetColor();
         }
 
     }
