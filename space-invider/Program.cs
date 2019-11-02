@@ -58,10 +58,12 @@ namespace space_invider
             var menu = new Menu(new string[] { "1. Play Game!\n", "2. Show Instruction\n", "3. Exit Game\n" });
 
             bool done = false;
-
+            menu.DrawMenu();
             do
             {
+
                 ConsoleKeyInfo keyInfo  = Console.ReadKey();
+                Console.Clear();
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
@@ -74,6 +76,7 @@ namespace space_invider
                         done = true;
                         break;
                 }
+                menu.DrawMenu();
             }
             while (!done);
 
@@ -94,8 +97,56 @@ namespace space_invider
         public int SelectedIndex { get; private set; } = -1;
         public string SelctedOption => SelectedIndex != -1 ? this.Items[SelectedIndex] : null;
 
-        public void MoveUp () => SelectedIndex = Math.Max(SelectedIndex - 1, 0);
-        public void MoveDown() => SelectedIndex = Math.Min(SelectedIndex + 1, Items.Count - 1);
+        public void MoveUp()
+        {
+            this.SelectedIndex = Math.Max(SelectedIndex - 1, 0);
+        }
+
+        public void MoveDown()
+        {
+            this.SelectedIndex = Math.Min(SelectedIndex + 1, Items.Count - 1);
+        }
+
+        public void DrawMenu()
+        {
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            char down = '\x2193';
+            char up = '\x2191';
+            Console.SetCursorPosition(0, 5);
+            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}", up,down);
+            Console.SetCursorPosition(0, 0);
+            switch (SelectedIndex)
+            {
+                case -1:
+                    Console.Write(Items[0]);
+                    Console.Write(Items[1]);
+                    Console.Write(Items[2]);
+                    break;
+                case 0:
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write(Items[0]);
+                    Console.ResetColor();
+                    Console.Write(Items[1]);
+                    Console.Write(Items[2]);
+                    break;
+                case 1:
+                    Console.Write(Items[0]);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write(Items[1]);
+                    Console.ResetColor();
+                    Console.Write(Items[2]);
+                    break;
+                case 2:
+                    Console.Write(Items[0]);
+                    Console.Write(Items[1]);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write(Items[2]);
+                    Console.ResetColor();
+                    break;
+            }
+
+        }
+
         public Menu(IEnumerable<string> items)
         {
             this.Items = items.ToArray();
