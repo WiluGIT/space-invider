@@ -29,6 +29,14 @@ namespace space_invider
             {
                 switch (userAction)
                 {
+                    case "-1":
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine("\nUzyj strzalek!");
+                        Console.ReadLine();
+                        Console.ResetColor();
+                        Console.Clear();
+                        showMenu(out userAction);
+                        break;
                     case "0":
                         isAnimating = false;
                         Console.Clear();
@@ -44,6 +52,7 @@ namespace space_invider
                         animateShip();
                         Console.ReadLine();
                         isAnimating = false;
+                        Thread.Sleep(10);
                         Console.Clear();
                         showMenu(out userAction);
                         break;
@@ -51,12 +60,6 @@ namespace space_invider
                         isAnimating = false;
                         isStayInMenu = false;
                         Console.Clear();
-                        break;
-                    default:
-                        Console.WriteLine("Wybrales zla opcje, wybierz ponownie");
-                        Console.ReadLine();
-                        Console.Clear();
-                        showMenu(out userAction);
                         break;
                 }
             } while (isStayInMenu);
@@ -125,6 +128,7 @@ namespace space_invider
                     }
 
                 }
+                
 
             })
             {
@@ -162,8 +166,6 @@ namespace space_invider
             }
             while (!done);
 
-
-            Console.WriteLine(menu.SelectedIndex);
             userAction = menu.SelectedIndex.ToString();
             
 
@@ -195,7 +197,7 @@ namespace space_invider
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             char down = '\x2193';
             char up = '\x2191';
-            Console.SetCursorPosition(0, 5);
+            Console.SetCursorPosition(0, 6);
             Console.Write("Wybierz opcje za pomoca strzalek {0} {1}", up,down);
             Console.SetCursorPosition(0, 0);
             switch (SelectedIndex)
@@ -286,17 +288,17 @@ namespace space_invider
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.SetCursorPosition(20, i);
-                Console.Write("\x03ee");
+                Console.Write("\x058E");
                 Console.SetCursorPosition(this.Width + 19, i);
-                Console.Write("\x03ee");
+                Console.Write("\x058E");
             }
             for (int j = 20; j < this.Width+20; j++)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.SetCursorPosition(j, 0);
-                Console.Write("\x03ee");
+                Console.Write("\x058E");
                 Console.SetCursorPosition(j, this.Height - 1);
-                Console.Write("\x03ee");
+                Console.Write("\x058E");
             }
             Console.ResetColor();
         }
