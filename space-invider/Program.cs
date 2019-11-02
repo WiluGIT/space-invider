@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace space_invider
@@ -162,6 +163,7 @@ namespace space_invider
                 IsBackground = true
             };
             thread.Start();
+
         }
 
     }
@@ -199,9 +201,10 @@ namespace space_invider
                 Console.SetCursorPosition(this.X, this.Y);
                 Console.Write(" ");
                 this.Y -= 1;
+                
+            }
 
 
-            } 
         }
     }
 
@@ -246,30 +249,33 @@ namespace space_invider
             this.ship.MoveShip(this, this.frame);
             while (this.isPlaying) 
             {
-                
+                bool enemyExist= Array.Exists(this.enemy, element => element != null);
+
+                if (!enemyExist) // all enemies are dead
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    this.isRunning = false;
+                    this.isPlaying = false;
+                }
                 for (int i = 0; i < this.enemy.Length; i++)
                 {
                     if (this.enemy[i] != null)  // losing game
                     {
+
                         if (ship != null && this.enemy[i].X == ship.X && this.enemy[i].Y == ship.Y || this.enemy[i].Y >= frame.Height - 2)
                         {
+                            Console.ForegroundColor = ConsoleColor.White;
                             this.isRunning = false;
                             this.isPlaying = false;
                             this.enemy[i] = null;
                             ship = null;
-                            Console.SetCursorPosition(0, frame.Height + 2);
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.WriteLine("Game Over!");
-                            Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
-                            Console.ReadKey(true);
-                            break;
+
 
                         }
 
 
 
                     }
-                    //TUTAJ COS Z NULLEM KURWA PO STRZLENIU
                     if ((laser != null) && (this.enemy[i] != null) && (this.enemy[i].X == laser.X) && (this.enemy[i].Y == laser.Y)) // killing enemy
                     {
                         this.enemy[i] = null;
@@ -283,6 +289,13 @@ namespace space_invider
 
 
             }
+            Thread.Sleep(1000);
+            Console.ResetColor();
+            Console.SetCursorPosition(0, frame.Height + 2);
+            Console.WriteLine("Game Over!");
+            Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
+            Console.ReadKey(true);
+            
             Console.Clear();
 
 
@@ -297,11 +310,10 @@ namespace space_invider
 
                 for (int i = 0; i < frame.Height - 1; i++)
                 {
-                    DrawEnemy();
-                    this.enemyY++;
                     if (this.isRunning == false)
                         break;
-
+                    DrawEnemy();
+                    this.enemyY++;
 
                 }
 
@@ -358,23 +370,6 @@ namespace space_invider
 
         }
 
-        public void ClearEnemy()
-        {
-            for (int j = 0; j < frame.Width; j++)
-            {
-                for (int i = 0; i < this.enemy.Length; i++)
-                {
-                    if (j == this.enemy[i].X)
-                    {
-                        Console.SetCursorPosition(this.enemy[i].X, this.enemy[i].Y);
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(this.enemy[i].EnemyCharacter);
-
-                    }
-                }
-
-            }
-        }
         public void GenerateEnemy()
         {
             int enemyCount = (int)Math.Floor(frame.Width * 0.5);
