@@ -136,18 +136,18 @@ namespace space_invider
 
                     ConsoleKeyInfo keyPressed = Console.ReadKey(true);
 
-                    if ((keyPressed.Key == ConsoleKey.W && this.Y != 1) || (keyPressed.Key == ConsoleKey.S && this.Y != frame.Height - 2))
+                    if ((keyPressed.Key == ConsoleKey.UpArrow && this.Y != 1) || (keyPressed.Key == ConsoleKey.DownArrow && this.Y != frame.Height - 2))
                     {
                         Console.SetCursorPosition(this.X, this.Y);
                         Console.Write(" ");
-                        this.Y += (keyPressed.Key == ConsoleKey.S) ? 1 : -1;
+                        this.Y += (keyPressed.Key == ConsoleKey.DownArrow) ? 1 : -1;
                         this.DrawShip();
                     }
-                    if ((keyPressed.Key == ConsoleKey.A && this.X != 1) || (keyPressed.Key == ConsoleKey.D && this.X != frame.Width - 2))
+                    if ((keyPressed.Key == ConsoleKey.LeftArrow && this.X != 1) || (keyPressed.Key == ConsoleKey.RightArrow && this.X != frame.Width - 2))
                     {
                         Console.SetCursorPosition(this.X, this.Y);
                         Console.Write(" ");
-                        this.X += (keyPressed.Key == ConsoleKey.D) ? 1 : -1;
+                        this.X += (keyPressed.Key == ConsoleKey.RightArrow) ? 1 : -1;
                         this.DrawShip();
                     }
                     if (this != null && keyPressed.Key == ConsoleKey.Spacebar)
@@ -253,7 +253,6 @@ namespace space_invider
 
                 if (!enemyExist) // all enemies are dead
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
                     this.isRunning = false;
                     this.isPlaying = false;
                 }
@@ -264,13 +263,10 @@ namespace space_invider
 
                         if (ship != null && this.enemy[i].X == ship.X && this.enemy[i].Y == ship.Y || this.enemy[i].Y >= frame.Height - 2)
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
                             this.isRunning = false;
                             this.isPlaying = false;
                             this.enemy[i] = null;
                             ship = null;
-
-
                         }
 
 
@@ -328,21 +324,6 @@ namespace space_invider
 
         public void DrawEnemy()
         {
-            /*
-             
-                         Console.SetCursorPosition(this.enemy[j].X, this.enemy[j].Y);
-            Console.ForegroundColor = ConsoleColor.Red;
-
-            Console.Write(this.enemy[j].EnemyCharacter);
-            Thread.Sleep(400);
-            Console.SetCursorPosition(this.enemy[j].X, this.enemy[j].Y);
-            Console.Write(" ");
-            this.enemy[j].Y++; ;
-            if (this.isRunning == false)
-                break;
-
-             */
-
             for (int i = 0; i < this.enemy.Length; i++)
             {
                 if (this.enemy[i]!= null)
