@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -21,7 +22,8 @@ namespace space_invider
         {
             Console.CursorVisible = false;
 
-            GameBoard gB;
+            GameBoard gB = new GameBoard();
+            gB.ReadFromFile();
 
             showMenu(out userAction);
 
@@ -29,18 +31,9 @@ namespace space_invider
             {
                 switch (userAction)
                 {
-                    case "-1":
-                        Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.WriteLine("\nUzyj strzalek!");
-                        Console.ReadLine();
-                        Console.ResetColor();
-                        Console.Clear();
-                        showMenu(out userAction);
-                        break;
                     case "0":
                         isAnimating = false;
                         Console.Clear();
-                        gB = new GameBoard();
                         gB.Play();
                         Console.Clear();
                         showMenu(out userAction);
@@ -179,8 +172,8 @@ namespace space_invider
     class Menu
     {
         public IReadOnlyList<string> Items { get; set; }
-        public int SelectedIndex { get; private set; } = -1;
-        public string SelctedOption => SelectedIndex != -1 ? this.Items[SelectedIndex] : null;
+        public int SelectedIndex { get; private set; } = 0;
+        public string SelctedOption => SelectedIndex != 0 ? this.Items[SelectedIndex] : null;
 
         public void MoveUp()
         {
@@ -202,11 +195,7 @@ namespace space_invider
             Console.SetCursorPosition(0, 0);
             switch (SelectedIndex)
             {
-                case -1:
-                    Console.Write(Items[0]);
-                    Console.Write(Items[1]);
-                    Console.Write(Items[2]);
-                    break;
+
                 case 0:
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write(Items[0]);
@@ -404,59 +393,61 @@ namespace space_invider
     }
 
     class GameBoard
-    {    
+    {
         public Ship ship { get; set; }
-        public Frame frame { get; set; }
-        public  Enemy[] enemy { get; set; }
+        public Frame[] frame { get; set; }
+        public Enemy[] enemy { get; set; }
         public Laser laser { get; set; }
 
 
         public bool isRunning { get; set; }
 
         private Thread enemyThread;
-        public int Score { get; set; }
+        public int Score { get; set; } = 0;
+
+        public int GameBoardIndex { get; set; } = 0;
 
         public volatile bool isPlaying;
 
         private readonly object gameLock = new object();
 
+        
+
 
         public int enemyY { get; set; }
 
-        public GameBoard()
-        {
-            this.ship = new Ship(13, 18);
-            this.frame = new Frame(30, 20);
-            this.Score = 0;
-            this.isPlaying = true;
 
-            this.isRunning = true;
-            this.enemyY = 1;
-        }
 
         public void Play() 
         {
+            this.ship = new Ship(this.frame[this.GameBoardIndex].Width-2, this.frame[this.GameBoardIndex].Height-2);
+            this.isPlaying = true;
+            this.isRunning = true;
+            this.enemyY = 1;
 
-            frame.CreateFrame();
+            this.frame[GameBoardIndex].CreateFrame();
             GenerateEnemy();
             this.ship.DrawShip();
             this.MoveEnemy();
-            this.ship.MoveShip(this, this.frame);
+            this.ship.MoveShip(this, this.frame[GameBoardIndex]);
             while (this.isPlaying) 
             {
                 bool enemyExist= Array.Exists(this.enemy, element => element != null);
 
                 if (!enemyExist) // all enemies are dead
                 {
+                    if (this.GameBoardIndex < this.frame.Length-1)
+                        this.GameBoardIndex++;
                     this.isRunning = false;
                     this.isPlaying = false;
+
                 }
                 for (int i = 0; i < this.enemy.Length; i++)
                 {
                     if (this.enemy[i] != null)  // losing game
                     {
 
-                        if (ship != null && this.enemy[i].X == ship.X && this.enemy[i].Y == ship.Y || this.enemy[i].Y >= frame.Height - 2)
+                        if (ship != null && this.enemy[i].X == ship.X && this.enemy[i].Y == ship.Y || this.enemy[i].Y >= frame[this.GameBoardIndex].Height - 2)
                         {
                             this.isRunning = false;
                             this.isPlaying = false;
@@ -482,7 +473,7 @@ namespace space_invider
             }
             Thread.Sleep(1000);
             Console.ResetColor();
-            Console.SetCursorPosition(0, frame.Height + 1);
+            Console.SetCursorPosition(0, frame[GameBoardIndex].Height + 1);
             Console.WriteLine("Your score: {0}", this.Score);
             Console.WriteLine("Game Over!");
             Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
@@ -500,7 +491,7 @@ namespace space_invider
             this.enemyThread = new Thread(t =>
             {
 
-                for (int i = 0; i < frame.Height - 1; i++)
+                for (int i = 0; i < frame[this.GameBoardIndex].Height - 1; i++)
                 {
                     if (this.isRunning == false)
                         break;
@@ -530,7 +521,7 @@ namespace space_invider
                 }
             }
             Thread.Sleep(800);
-            for (int j = 1; j < frame.Width-1; j++)
+            for (int j = 1; j < frame[this.GameBoardIndex].Width-1; j++)
             {
                 Console.SetCursorPosition(j, this.enemyY);
                 Console.Write(" ");
@@ -549,19 +540,58 @@ namespace space_invider
 
         public void GenerateEnemy()
         {
-            int enemyCount = (int)Math.Floor(frame.Width * 0.5);
+            int enemyCount = (int)Math.Floor(frame[this.GameBoardIndex].Width * 0.5);
 
             this.enemy = new Enemy[enemyCount];
 
             Random rnd = new Random();
 
-            int frameX = rnd.Next(1, frame.Width - enemyCount);
+            int frameX = rnd.Next(1, frame[this.GameBoardIndex].Width - enemyCount);
 
             for(int i=0;i<this.enemy.Length;i++)
             {
                 this.enemy[i] = new Enemy(frameX,1);
                 frameX++;
             }
+
+        }
+
+        public void ReadFromFile()
+        {
+            try
+            {
+                StreamReader file = new StreamReader(@"./input.txt");
+                string line;
+                string[] buffor;
+                int counter = 0;
+                while ((line = file.ReadLine()) != null)
+                {
+                    counter++;
+                }
+
+                file.DiscardBufferedData();
+                file.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                this.frame = new Frame[counter];
+                counter = 0;
+
+                while ((line = file.ReadLine()) != null)
+                {
+                    buffor = line.Split(",");
+                    this.frame[counter] = new Frame(int.Parse(buffor[0]), int.Parse(buffor[1]));
+
+
+                    counter++;
+                }
+                file.Close();
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+
+            
 
         }
 
