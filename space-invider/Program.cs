@@ -287,7 +287,8 @@ namespace space_invider
             }
             Thread.Sleep(1000);
             Console.ResetColor();
-            Console.SetCursorPosition(0, frame.Height + 2);
+            Console.SetCursorPosition(0, frame.Height + 1);
+            Console.WriteLine("Your score: {0}", this.Score);
             Console.WriteLine("Game Over!");
             Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
             Console.ReadKey(true);
