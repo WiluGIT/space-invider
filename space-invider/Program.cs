@@ -519,6 +519,7 @@ namespace space_invider
         public int BoardCounter { get; set; } = 0;
         public int enemyY { get; set; }
 
+        public bool IndexChanged { get; set; } = false;
 
 
         public void Play(out bool isGameFinished) 
@@ -527,6 +528,7 @@ namespace space_invider
             SpawnCandy();
             this.isPlaying = true;
             this.isRunning = true;
+            this.IndexChanged = false;
             this.enemyY = 1;
 
             this.frame[GameBoardIndex].CreateFrame();
@@ -544,7 +546,11 @@ namespace space_invider
                 if (!enemyExist) // all enemies are dead
                 {
                     if (this.GameBoardIndex < this.frame.Length - 1)
+                    {
                         this.GameBoardIndex++;
+                        this.IndexChanged = true;
+                    }
+
 
                     if(this.BoardCounter<=this.frame.Length)
                         this.BoardCounter++;
@@ -726,6 +732,7 @@ namespace space_invider
 
         public void DrawEnemy()
         {
+
             Console.SetCursorPosition(0, this.frame[this.GameBoardIndex].Height);
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.Write("Wynik: {0}", this.Score);
@@ -748,11 +755,23 @@ namespace space_invider
 
             Thread.Sleep(800);
 
-            for (int j = 1; j < frame[this.GameBoardIndex].Width-1; j++)
+            if (this.IndexChanged)
             {
-                Console.SetCursorPosition(j, this.enemyY);
-                Console.Write(" ");
+                for (int j = 1; j < frame[this.GameBoardIndex-1].Width - 1; j++)
+                {
+                    Console.SetCursorPosition(j, this.enemyY);
+                    Console.Write(" ");
+                }
             }
+            else
+            {
+                for (int j = 1; j < frame[this.GameBoardIndex].Width - 1; j++)
+                {
+                    Console.SetCursorPosition(j, this.enemyY);
+                    Console.Write(" ");
+                }
+            }
+
 
             for (int i = 0; i < this.enemy.Length; i++)
             {
