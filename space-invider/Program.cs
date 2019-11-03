@@ -234,8 +234,9 @@ namespace space_invider
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             char down = '\x2193';
             char up = '\x2191';
+            char enter = '\x2190';
             Console.SetCursorPosition(0, 6);
-            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}", up,down);
+            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up,down, enter);
             Console.SetCursorPosition(0, 0);
             switch (SelectedIndex)
             {
@@ -270,8 +271,9 @@ namespace space_invider
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             char down = '\x2193';
             char up = '\x2191';
+            char enter = '\x2190';
             Console.SetCursorPosition(0, 6);
-            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}", up, down);
+            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up, down, enter);
             Console.SetCursorPosition(0, 0);
             switch (SelectedIndex)
             {
@@ -436,6 +438,28 @@ namespace space_invider
 
     }
 
+    class Candy : Position
+    {
+        public char CandyLook { get; set; }
+
+        public Candy(int x, int y): base(x,y)
+        {
+            this.CandyLook = 'o';
+        }
+        public void DrawCandy()
+        {
+            Console.SetCursorPosition(this.X, this.Y);
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Write(this.CandyLook);
+        }
+        public void ClearCandy()
+        {
+            Console.SetCursorPosition(this.X, this.Y);
+            Console.ResetColor();
+            Console.Write(" ");
+        }
+        
+    }
     class Laser: Position
     {
         public char FireLasor { get; set; }
@@ -464,13 +488,14 @@ namespace space_invider
         }
     }
 
+
     class GameBoard
     {
         public Ship ship { get; set; }
         public Frame[] frame { get; set; }
         public Enemy[] enemy { get; set; }
         public Laser laser { get; set; }
-
+        public Candy candy { get; set; }
 
         public bool isRunning { get; set; }
 
@@ -489,6 +514,7 @@ namespace space_invider
         public void Play(out bool isGameFinished) 
         {
             this.ship = new Ship(this.frame[this.GameBoardIndex].Width - 2, this.frame[this.GameBoardIndex].Height - 2);
+            SpawnCandy();
             this.isPlaying = true;
             this.isRunning = true;
             this.enemyY = 1;
@@ -501,6 +527,7 @@ namespace space_invider
 
             while (this.isPlaying)
             {
+
                 bool enemyExist = Array.Exists(this.enemy, element => element != null);
 
 
@@ -516,8 +543,17 @@ namespace space_invider
                     this.isPlaying = false;
 
                 }
+                if ((candy != null) && (this.ship != null) && (this.ship.X == candy.X) && (this.ship.Y == candy.Y)) // getting candy
+                {
+                    this.candy.ClearCandy();
+                    this.candy = null;
+                    Score+=20;
+
+                }
                 for (int i = 0; i < this.enemy.Length; i++)
                 {
+
+
                     if (this.enemy[i] != null)  // losing game
                     {
 
@@ -560,6 +596,8 @@ namespace space_invider
                 isGameFinished = true;
                 this.GameBoardIndex = 0;
                 this.BoardCounter = 0;
+                this.Score = 0;
+                this.enemyY = 1;
                 Console.Clear();
             }
             else
@@ -569,6 +607,8 @@ namespace space_invider
                 Console.SetCursorPosition(0, frame[GameBoardIndex].Height + 1);
                 Console.WriteLine("Twoj wynik: {0}", this.Score);
                 Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
+                this.candy = null;
+                this.enemyY = 1;
                 Console.ReadKey(true);
 
                 Console.Clear();
@@ -679,8 +719,15 @@ namespace space_invider
                     Console.Write(this.enemy[i].EnemyCharacter);
                 }
             }
+
+            if (this.candy == null)
+            {
+                SpawnCandy();
+
+            }
             Thread.Sleep(800);
-            for (int j = 1; j < frame[this.GameBoardIndex].Width-2; j++)
+
+            for (int j = 1; j < frame[this.GameBoardIndex].Width-1; j++)
             {
                 Console.SetCursorPosition(j, this.enemyY);
                 Console.Write(" ");
@@ -712,6 +759,32 @@ namespace space_invider
                 this.enemy[i] = new Enemy(frameX,1);
                 frameX++;
             }
+
+        }
+
+        public void SpawnCandy()
+        {
+            Random rnd = new Random();
+
+            int frameX = rnd.Next(1, this.frame[this.GameBoardIndex].Width-2);
+            int frameY = rnd.Next(this.enemyY+3, this.frame[this.GameBoardIndex].Height-1);
+
+            int spawnOrNo = 0;
+
+            int random = rnd.Next(0, 3);
+
+            if (this.candy == null && this.enemyY < frameY && frameY<this.frame[this.GameBoardIndex].Height-1)
+            {
+                if (random == spawnOrNo)
+                {
+                    Candy candy = new Candy(frameX, frameY);
+                    this.candy = candy;
+                    this.candy.DrawCandy();
+                }
+
+            }
+
+
 
         }
 
