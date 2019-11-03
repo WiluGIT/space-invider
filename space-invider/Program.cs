@@ -595,13 +595,12 @@ namespace space_invider
 
             if (this.BoardCounter>=this.frame.Length)
             {
-                
                 Thread.Sleep(1000);
                 Console.ResetColor();
-                Console.SetCursorPosition(0, frame[GameBoardIndex].Height + 1);
+                Console.SetCursorPosition(0, frame[GameBoardIndex].Height);
                 Console.WriteLine("Gratulacje, ukonczyles wszystkie poziomy!");
                 Console.WriteLine("Twoj wynik: {0}", this.Score);
-                Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
+                Console.WriteLine("Wcisnij enter, aby otworzyc menu");
                 Console.ReadKey(true);
                 isGameFinished = true;
                 this.GameBoardIndex = 0;
@@ -614,9 +613,9 @@ namespace space_invider
             {
                 Thread.Sleep(1000);
                 Console.ResetColor();
-                Console.SetCursorPosition(0, frame[GameBoardIndex].Height + 1);
+                Console.SetCursorPosition(0, frame[GameBoardIndex-1].Height);
                 Console.WriteLine("Twoj wynik: {0}", this.Score);
-                Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
+                Console.WriteLine("Wcisnij enter, aby otworzyc menu");
                 this.candy = null;
                 this.enemyY = 1;
                 Console.ReadKey(true);
@@ -702,8 +701,15 @@ namespace space_invider
 
                 for (int i = 0; i < frame[this.GameBoardIndex].Height - 1; i++)
                 {
+
                     if (this.isRunning == false)
+                    {
+                        Console.SetCursorPosition(0, this.frame[this.GameBoardIndex-1].Height);
+                        Console.Write("                    ");
+                        Console.ResetColor();
                         break;
+                    }
+                        
                     DrawEnemy();
                     this.enemyY++;
 
@@ -720,6 +726,10 @@ namespace space_invider
 
         public void DrawEnemy()
         {
+            Console.SetCursorPosition(0, this.frame[this.GameBoardIndex].Height);
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("Wynik: {0}", this.Score);
+            Console.ResetColor();
             for (int i = 0; i < this.enemy.Length; i++)
             {
                 if (this.enemy[i]!= null)
@@ -735,6 +745,7 @@ namespace space_invider
                 SpawnCandy();
 
             }
+
             Thread.Sleep(800);
 
             for (int j = 1; j < frame[this.GameBoardIndex].Width-1; j++)
@@ -777,7 +788,7 @@ namespace space_invider
             Random rnd = new Random();
 
             int frameX = rnd.Next(1, this.frame[this.GameBoardIndex].Width-2);
-            int frameY = rnd.Next(this.enemyY+3, this.frame[this.GameBoardIndex].Height-1);
+            int frameY = rnd.Next(this.enemyY, this.frame[this.GameBoardIndex].Height-1);
 
             int spawnOrNo = 0;
 
