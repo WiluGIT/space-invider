@@ -178,7 +178,7 @@ namespace space_invider
         private static void showMenu(out string userAction)
         {
             
-            var menu = new Menu(new string[] { "1. Play Game!\n", "2. Show Instruction\n", "3. Exit Game\n" });
+            var menu = new Menu(new string[] { "1. Zagraj w gre!\n", "2. Pokaz instrukcje\n", "3. Wyjdz z gry\n" });
 
             bool done = false;
             menu.DrawMenu();
