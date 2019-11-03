@@ -19,6 +19,8 @@ namespace space_invider
 
         private static bool isStayInMenu=true;
 
+        private static bool isStayInMenuGame = true;
+
         private static bool isAnimating = true;
 
         private static Thread shipAnimationThread;
@@ -39,36 +41,43 @@ namespace space_invider
                         isAnimating = false;
                         Console.Clear();
                         gB.Play(out isGameFinished);
-                        if (isGameFinished == true)
-                        {
-                            gB.showSecondMenu(out userActionFromGame, isGameFinished);
-                            switch (userActionFromGame)
-                            {
-                                case "0":
-                                    isGameFinished = false;
-                                    Console.Clear();
-                                    gB.Play(out isGameFinished);
-                                    break;
-                                case "1":
-                                    Console.Clear();
-                                    break;
-                            }
 
-                        }
-                        else if(isGameFinished==false)
-                        {
-                            gB.showSecondMenu(out userActionFromGame, isGameFinished);
-                            switch (userActionFromGame)
+                        do {
+                            if (isGameFinished == true)
                             {
-                                case "0":
-                                    Console.Clear();
-                                    gB.Play(out isGameFinished);
-                                    break;
-                                case "1":
-                                    Console.Clear();
-                                    break;
+                                gB.showSecondMenu(out userActionFromGame, isGameFinished);
+                                switch (userActionFromGame)
+                                {
+                                    case "0":
+                                        isGameFinished = false;
+                                        Console.Clear();
+                                        gB.Play(out isGameFinished);
+                                        break;
+                                    case "1":
+                                        isStayInMenuGame=false;
+                                        Console.Clear();
+                                        break;
+                                }
+
                             }
-                        }
+                            else if (isGameFinished == false)
+                            {
+                                gB.showSecondMenu(out userActionFromGame, isGameFinished);
+                                switch (userActionFromGame)
+                                {
+                                    case "0":
+                                        Console.Clear();
+                                        gB.Play(out isGameFinished);
+                                        break;
+                                    case "1":
+                                        Console.Clear();
+                                        isStayInMenuGame = false;
+                                        break;
+                                }
+                            }
+                        } while (isStayInMenuGame);
+                        //tu sie odpala raz jeden raz drugi
+                        
 
                         Console.Clear();
                         showMenu(out userAction);
