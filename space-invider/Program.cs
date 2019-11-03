@@ -13,6 +13,10 @@ namespace space_invider
     {
         private static string userAction;
 
+        private static string userActionFromGame;
+
+        private static bool isGameFinished = false;
+
         private static bool isStayInMenu=true;
 
         private static bool isAnimating = true;
@@ -34,7 +38,38 @@ namespace space_invider
                     case "0":
                         isAnimating = false;
                         Console.Clear();
-                        gB.Play();
+                        gB.Play(out isGameFinished);
+                        if (isGameFinished == true)
+                        {
+                            gB.showSecondMenu(out userActionFromGame, isGameFinished);
+                            switch (userActionFromGame)
+                            {
+                                case "0":
+                                    isGameFinished = false;
+                                    Console.Clear();
+                                    gB.Play(out isGameFinished);
+                                    break;
+                                case "1":
+                                    Console.Clear();
+                                    break;
+                            }
+
+                        }
+                        else if(isGameFinished==false)
+                        {
+                            gB.showSecondMenu(out userActionFromGame, isGameFinished);
+                            switch (userActionFromGame)
+                            {
+                                case "0":
+                                    Console.Clear();
+                                    gB.Play(out isGameFinished);
+                                    break;
+                                case "1":
+                                    Console.Clear();
+                                    break;
+                            }
+                        }
+
                         Console.Clear();
                         showMenu(out userAction);
                         break;
@@ -216,6 +251,34 @@ namespace space_invider
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write(Items[2]);
                     Console.ResetColor();
+                    break;
+            }
+
+        }
+
+        public void DrawSecondMenu()
+        {
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            char down = '\x2193';
+            char up = '\x2191';
+            Console.SetCursorPosition(0, 6);
+            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}", up, down);
+            Console.SetCursorPosition(0, 0);
+            switch (SelectedIndex)
+            {
+
+                case 0:
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write(Items[0]);
+                    Console.ResetColor();
+                    Console.Write(Items[1]);
+                    break;
+                case 1:
+                    Console.Write(Items[0]);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write(Items[1]);
+                    Console.ResetColor();
+
                     break;
             }
 
@@ -409,18 +472,14 @@ namespace space_invider
 
         public volatile bool isPlaying;
 
-        private readonly object gameLock = new object();
-
-        
-
-
+        public int BoardCounter { get; set; } = 0;
         public int enemyY { get; set; }
 
 
 
-        public void Play() 
+        public void Play(out bool isGameFinished) 
         {
-            this.ship = new Ship(this.frame[this.GameBoardIndex].Width-2, this.frame[this.GameBoardIndex].Height-2);
+            this.ship = new Ship(this.frame[this.GameBoardIndex].Width - 2, this.frame[this.GameBoardIndex].Height - 2);
             this.isPlaying = true;
             this.isRunning = true;
             this.enemyY = 1;
@@ -430,14 +489,20 @@ namespace space_invider
             this.ship.DrawShip();
             this.MoveEnemy();
             this.ship.MoveShip(this, this.frame[GameBoardIndex]);
-            while (this.isPlaying) 
+
+            while (this.isPlaying)
             {
-                bool enemyExist= Array.Exists(this.enemy, element => element != null);
+                bool enemyExist = Array.Exists(this.enemy, element => element != null);
+
 
                 if (!enemyExist) // all enemies are dead
                 {
-                    if (this.GameBoardIndex < this.frame.Length-1)
+                    if (this.GameBoardIndex < this.frame.Length - 1)
                         this.GameBoardIndex++;
+
+                    if(this.BoardCounter<=this.frame.Length)
+                        this.BoardCounter++;
+
                     this.isRunning = false;
                     this.isPlaying = false;
 
@@ -471,20 +536,105 @@ namespace space_invider
 
 
             }
-            Thread.Sleep(1000);
-            Console.ResetColor();
-            Console.SetCursorPosition(0, frame[GameBoardIndex].Height + 1);
-            Console.WriteLine("Your score: {0}", this.Score);
-            Console.WriteLine("Game Over!");
-            Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
-            Console.ReadKey(true);
-            
-            Console.Clear();
+            isGameFinished = false;
+
+            if (this.BoardCounter>=this.frame.Length)
+            {
+                
+                Thread.Sleep(1000);
+                Console.ResetColor();
+                Console.SetCursorPosition(0, frame[GameBoardIndex].Height + 1);
+                Console.WriteLine("Gratulacje, ukonczyles wszystkie poziomy!");
+                Console.WriteLine("Twoj wynik: {0}", this.Score);
+                Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
+                Console.ReadKey(true);
+                isGameFinished = true;
+                this.GameBoardIndex = 0;
+                this.BoardCounter = 0;
+                Console.Clear();
+            }
+            else
+            {
+                Thread.Sleep(1000);
+                Console.ResetColor();
+                Console.SetCursorPosition(0, frame[GameBoardIndex].Height + 1);
+                Console.WriteLine("Twoj wynik: {0}", this.Score);
+                Console.WriteLine("Wcisnij dowolny przycisk, aby przejsc do menu glownego");
+                Console.ReadKey(true);
+
+                Console.Clear();
+            }
+
+
+
 
 
 
         }
 
+
+        public void showSecondMenu(out string userActionFromGame,bool isGameFinished)
+        {
+            var menu1 = new Menu(new string[] { "1. Zagraj ponownie!\n",  "2. Wyjdz\n" });
+            var menu2 = new Menu(new string[] { "1. Zagraj nastepna mape!\n", "2. Wyjdz\n" });
+
+            bool done = false;
+            if (isGameFinished)
+            {
+                menu1.DrawSecondMenu();
+                do
+                {
+
+                    ConsoleKeyInfo keyInfo = Console.ReadKey();
+                    Console.Clear();
+                    switch (keyInfo.Key)
+                    {
+                        case ConsoleKey.UpArrow:
+                            menu1.MoveUp();
+                            break;
+                        case ConsoleKey.DownArrow:
+                            menu1.MoveDown();
+                            break;
+                        case ConsoleKey.Enter:
+                            done = true;
+                            break;
+                    }
+                    menu1.DrawSecondMenu();
+                }
+                while (!done);
+
+                userActionFromGame = menu1.SelectedIndex.ToString();
+            }
+            else 
+            {
+                menu2.DrawSecondMenu();
+                do
+                {
+
+                    ConsoleKeyInfo keyInfo = Console.ReadKey();
+                    Console.Clear();
+                    switch (keyInfo.Key)
+                    {
+                        case ConsoleKey.UpArrow:
+                            menu2.MoveUp();
+                            break;
+                        case ConsoleKey.DownArrow:
+                            menu2.MoveDown();
+                            break;
+                        case ConsoleKey.Enter:
+                            done = true;
+                            break;
+                    }
+                    menu2.DrawSecondMenu();
+                }
+                while (!done);
+
+                userActionFromGame = menu2.SelectedIndex.ToString();
+            }
+           
+
+
+        }
 
         public void MoveEnemy()
         {
@@ -521,7 +671,7 @@ namespace space_invider
                 }
             }
             Thread.Sleep(800);
-            for (int j = 1; j < frame[this.GameBoardIndex].Width-1; j++)
+            for (int j = 1; j < frame[this.GameBoardIndex].Width-2; j++)
             {
                 Console.SetCursorPosition(j, this.enemyY);
                 Console.Write(" ");
