@@ -145,6 +145,16 @@ namespace space_invider
                         Console.SetCursorPosition(22, top + 5);
                         Console.Write("$");
                         Console.ResetColor();
+                        Console.SetCursorPosition(22, top + 6);
+                        Console.Write("To sa cukierki za, ktore masz dodatkowe punkty:\n");
+                        Console.SetCursorPosition(22, top + 7);
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        Console.Write("o");
+                        Console.ResetColor();
+                        Console.SetCursorPosition(22, top + 8);
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write("Poruszaj sie strzalkami i strzelaj za pomoca entera. Powodzenia!\n");
+                        Console.ResetColor();
                         for (int h = 0; h < image.Height; h++)
                         {
                             for (int w = 0; w < image.Width; w++)
