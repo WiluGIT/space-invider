@@ -619,7 +619,14 @@ namespace space_invider
             {
                 Thread.Sleep(1000);
                 Console.ResetColor();
-                Console.SetCursorPosition(0, frame[GameBoardIndex-1].Height);
+                if(this.IndexChanged)
+                {
+                    Console.SetCursorPosition(0, frame[GameBoardIndex - 1].Height);
+                }
+                else 
+                {
+                    Console.SetCursorPosition(0, frame[GameBoardIndex].Height);
+                }
                 Console.WriteLine("Twoj wynik: {0}", this.Score);
                 Console.WriteLine("Wcisnij enter, aby otworzyc menu");
                 this.candy = null;
@@ -627,6 +634,7 @@ namespace space_invider
                 Console.ReadKey(true);
 
                 Console.Clear();
+
             }
 
 
@@ -710,9 +718,7 @@ namespace space_invider
 
                     if (this.isRunning == false)
                     {
-                        Console.SetCursorPosition(0, this.frame[this.GameBoardIndex-1].Height);
-                        Console.Write("                    ");
-                        Console.ResetColor();
+
                         break;
                     }
                         
