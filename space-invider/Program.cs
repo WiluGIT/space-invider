@@ -116,7 +116,7 @@ namespace space_invider
                 while (isAnimating)
                 {
 
-                    Image image = Image.FromFile(@"C:\Users\wolfr\Desktop\gif1.gif");
+                    Image image = Image.FromFile(@"./gif1.gif");
                     FrameDimension dimension = new FrameDimension(image.FrameDimensionsList[0]);
                     int frameCount = image.GetFrameCount(dimension);
                     StringBuilder sb;
@@ -264,9 +264,9 @@ namespace space_invider
             Console.SetCursorPosition(0, 0);
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write(title);
-            Console.ResetColor();
             Console.SetCursorPosition(0, 15);
             Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up,down, enter);
+            Console.ResetColor();
             Console.SetCursorPosition(0, 10);
 
             switch (SelectedIndex)
@@ -321,9 +321,9 @@ namespace space_invider
             Console.SetCursorPosition(0, 0);
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write(title);
-            Console.ResetColor();
             Console.SetCursorPosition(0, 15);
             Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up, down, enter);
+            Console.ResetColor();
             Console.SetCursorPosition(0, 10);
             switch (SelectedIndex)
             {
