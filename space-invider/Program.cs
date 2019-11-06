@@ -26,7 +26,7 @@ namespace space_invider
         private static Thread shipAnimationThread;
         static void Main(string[] args)
         {
-            Console.SetWindowSize(97,22);
+            Console.SetWindowSize(97,25);
             Console.SetCursorPosition(0, 200);
 
             Console.CursorVisible = false;
@@ -305,9 +305,26 @@ namespace space_invider
             char down = '\x2193';
             char up = '\x2191';
             char enter = '\x2190';
-            Console.SetCursorPosition(0, 6);
-            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up, down, enter);
+            string title = @" 
+ ________  ________  ________  ___  __    _______  _________  _________  _______   ________         
+|\   __  \|\   __  \|\   ____\|\  \|\  \ |\  ___ \|\___   ___\\___   ___\\  ___ \ |\   __  \        
+\ \  \|\  \ \  \|\  \ \  \___|\ \  \/  /|\ \   __/\|___ \  \_\|___ \  \_\ \   __/|\ \  \|\  \       
+ \ \   _  _\ \  \\\  \ \  \    \ \   ___  \ \  \_|/__  \ \  \     \ \  \ \ \  \_|/_\ \   _  _\      
+  \ \  \\  \\ \  \\\  \ \  \____\ \  \\ \  \ \  \_|\ \  \ \  \     \ \  \ \ \  \_|\ \ \  \\  \     
+   \ \__\\ _\\ \_______\ \_______\ \__\\ \__\ \_______\  \ \__\     \ \__\ \ \_______\ \__\\ _\     
+    \|__|\|__|\|_______|\|_______|\|__| \|__|\|_______|   \|__|      \|__|  \|_______|\|__|\|__|    
+                                                                                                    
+                                                                                                    
+                                                                                                    ";
+
+
             Console.SetCursorPosition(0, 0);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write(title);
+            Console.ResetColor();
+            Console.SetCursorPosition(0, 15);
+            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up, down, enter);
+            Console.SetCursorPosition(0, 10);
             switch (SelectedIndex)
             {
 
@@ -362,12 +379,12 @@ namespace space_invider
             for (int i = 0; i < this.Height; i++)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.SetCursorPosition(0, i);
+                Console.SetCursorPosition((Console.WindowWidth/2)-5, i);
                 Console.Write("*");
-                Console.SetCursorPosition(this.Width-1, i);
+                Console.SetCursorPosition((Console.WindowWidth / 2) - 5 +this.Width-1, i);
                 Console.Write("*");
             }
-            for (int j = 0; j < this.Width; j++)
+            for (int j = (Console.WindowWidth / 2) - 5; j < (Console.WindowWidth / 2) - 5 + this.Width; j++)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.SetCursorPosition(j, 0);
@@ -434,7 +451,7 @@ namespace space_invider
                         this.Y += (keyPressed.Key == ConsoleKey.DownArrow) ? 1 : -1;
                         this.DrawShip();
                     }
-                    if ((keyPressed.Key == ConsoleKey.LeftArrow && this.X != 1) || (keyPressed.Key == ConsoleKey.RightArrow && this.X != frame.Width - 2))
+                    if ((keyPressed.Key == ConsoleKey.LeftArrow && this.X != gb.xMove+1) || (keyPressed.Key == ConsoleKey.RightArrow && this.X != gb.xMove + frame.Width - 2))
                     {
                         Console.SetCursorPosition(this.X, this.Y);
                         Console.Write(" ");
@@ -530,6 +547,8 @@ namespace space_invider
         public Laser laser { get; set; }
         public Candy candy { get; set; }
 
+        public int xMove { get; set; } = (Console.WindowWidth / 2) - 5;
+
         public bool isRunning { get; set; }
 
         private Thread enemyThread;
@@ -547,7 +566,7 @@ namespace space_invider
 
         public void Play(out bool isGameFinished) 
         {
-            this.ship = new Ship(this.frame[this.GameBoardIndex].Width - 2, this.frame[this.GameBoardIndex].Height - 2);
+            this.ship = new Ship(this.xMove +this.frame[this.GameBoardIndex].Width - 2, this.frame[this.GameBoardIndex].Height - 2);
             SpawnCandy();
             this.isPlaying = true;
             this.isRunning = true;
@@ -626,7 +645,7 @@ namespace space_invider
             {
                 Thread.Sleep(1000);
                 Console.ResetColor();
-                Console.SetCursorPosition(0, frame[GameBoardIndex].Height);
+                Console.SetCursorPosition((Console.WindowWidth / 2) - 5, frame[GameBoardIndex].Height);
                 Console.WriteLine("Gratulacje, ukonczyles wszystkie poziomy!");
                 Console.WriteLine("Twoj wynik: {0}", this.Score);
                 Console.WriteLine("Wcisnij enter, aby otworzyc menu");
@@ -644,11 +663,11 @@ namespace space_invider
                 Console.ResetColor();
                 if(this.IndexChanged)
                 {
-                    Console.SetCursorPosition(0, frame[GameBoardIndex - 1].Height);
+                    Console.SetCursorPosition((Console.WindowWidth / 2) - 5, frame[GameBoardIndex - 1].Height);
                 }
                 else 
                 {
-                    Console.SetCursorPosition(0, frame[GameBoardIndex].Height);
+                    Console.SetCursorPosition((Console.WindowWidth / 2) - 5, frame[GameBoardIndex].Height);
                 }
                 Console.WriteLine("Twoj wynik: {0}", this.Score);
                 Console.WriteLine("Wcisnij enter, aby otworzyc menu");
@@ -762,7 +781,7 @@ namespace space_invider
         public void DrawEnemy()
         {
 
-            Console.SetCursorPosition(0, this.frame[this.GameBoardIndex].Height);
+            Console.SetCursorPosition(this.xMove, this.frame[this.GameBoardIndex].Height);
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.Write("Wynik: {0}", this.Score);
             Console.ResetColor();
@@ -786,7 +805,7 @@ namespace space_invider
 
             if (this.IndexChanged)
             {
-                for (int j = 1; j < frame[this.GameBoardIndex-1].Width - 1; j++)
+                for (int j = this.xMove+1; j < this.xMove+frame[this.GameBoardIndex-1].Width - 1; j++)
                 {
                     Console.SetCursorPosition(j, this.enemyY);
                     Console.Write(" ");
@@ -794,7 +813,7 @@ namespace space_invider
             }
             else
             {
-                for (int j = 1; j < frame[this.GameBoardIndex].Width - 1; j++)
+                for (int j = this.xMove+1; j < this.xMove + frame[this.GameBoardIndex].Width - 1; j++)
                 {
                     Console.SetCursorPosition(j, this.enemyY);
                     Console.Write(" ");
@@ -821,7 +840,7 @@ namespace space_invider
 
             Random rnd = new Random();
 
-            int frameX = rnd.Next(1, frame[this.GameBoardIndex].Width - enemyCount);
+            int frameX = rnd.Next(this.xMove+1, this.xMove + frame[this.GameBoardIndex].Width - enemyCount);
 
             for(int i=0;i<this.enemy.Length;i++)
             {
@@ -835,7 +854,7 @@ namespace space_invider
         {
             Random rnd = new Random();
 
-            int frameX = rnd.Next(1, this.frame[this.GameBoardIndex].Width-2);
+            int frameX = rnd.Next(this.xMove+1, this.xMove+ this.frame[this.GameBoardIndex].Width-2);
             int frameY = rnd.Next(this.enemyY, this.frame[this.GameBoardIndex].Height-1);
 
             int spawnOrNo = 0;
