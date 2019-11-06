@@ -26,6 +26,9 @@ namespace space_invider
         private static Thread shipAnimationThread;
         static void Main(string[] args)
         {
+            Console.SetWindowSize(97,22);
+            Console.SetCursorPosition(0, 200);
+
             Console.CursorVisible = false;
 
             GameBoard gB = new GameBoard();
@@ -76,7 +79,7 @@ namespace space_invider
                                 }
                             }
                         } while (isStayInMenuGame);
-                        //tu sie odpala raz jeden raz drugi
+                        
                         
 
                         Console.Clear();
@@ -214,9 +217,9 @@ namespace space_invider
             while (!done);
 
             userAction = menu.SelectedIndex.ToString();
-            
 
-           
+            Console.SetCursorPosition(0, 0);
+
 
         }
 
@@ -245,9 +248,25 @@ namespace space_invider
             char down = '\x2193';
             char up = '\x2191';
             char enter = '\x2190';
-            Console.SetCursorPosition(0, 6);
-            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up,down, enter);
+            string title = @" 
+ ________  ________  ________  ___  __    _______  _________  _________  _______   ________         
+|\   __  \|\   __  \|\   ____\|\  \|\  \ |\  ___ \|\___   ___\\___   ___\\  ___ \ |\   __  \        
+\ \  \|\  \ \  \|\  \ \  \___|\ \  \/  /|\ \   __/\|___ \  \_\|___ \  \_\ \   __/|\ \  \|\  \       
+ \ \   _  _\ \  \\\  \ \  \    \ \   ___  \ \  \_|/__  \ \  \     \ \  \ \ \  \_|/_\ \   _  _\      
+  \ \  \\  \\ \  \\\  \ \  \____\ \  \\ \  \ \  \_|\ \  \ \  \     \ \  \ \ \  \_|\ \ \  \\  \     
+   \ \__\\ _\\ \_______\ \_______\ \__\\ \__\ \_______\  \ \__\     \ \__\ \ \_______\ \__\\ _\     
+    \|__|\|__|\|_______|\|_______|\|__| \|__|\|_______|   \|__|      \|__|  \|_______|\|__|\|__|    
+                                                                                                    
+                                                                                                    
+                                                                                                    ";
+
+
             Console.SetCursorPosition(0, 0);
+            Console.Write(title);
+            Console.SetCursorPosition(0, 15);
+            Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up,down, enter);
+            Console.SetCursorPosition(0, 10);
+            
             switch (SelectedIndex)
             {
 
@@ -273,6 +292,8 @@ namespace space_invider
                     Console.ResetColor();
                     break;
             }
+
+    
 
         }
 
