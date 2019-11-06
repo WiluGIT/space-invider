@@ -262,11 +262,13 @@ namespace space_invider
 
 
             Console.SetCursorPosition(0, 0);
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write(title);
+            Console.ResetColor();
             Console.SetCursorPosition(0, 15);
             Console.Write("Wybierz opcje za pomoca strzalek {0} {1}, a nastepnie zatwierdz enterem {2}", up,down, enter);
             Console.SetCursorPosition(0, 10);
-            
+
             switch (SelectedIndex)
             {
 
@@ -284,7 +286,7 @@ namespace space_invider
                     Console.ResetColor();
                     Console.Write(Items[2]);
                     break;
-                case 2:
+                case 2:                   
                     Console.Write(Items[0]);
                     Console.Write(Items[1]);
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
